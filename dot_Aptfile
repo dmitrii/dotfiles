@@ -1,0 +1,14 @@
+# apt packages for Debian/Ubuntu machines, one per line.
+# Editing this file reruns the install on the next `chezmoi apply` or `up`.
+build-essential
+curl
+fd-find
+fish
+fzf
+gh
+git
+jq
+ripgrep
+tmux
+tree
+unzip

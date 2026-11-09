@@ -20,3 +20,6 @@ README.md
 .Brewfile
 .local/bin/brew-upgrade-with-cooldown
 {{ end }}
+{{ if not (lookPath "apt-get") }}
+.Aptfile
+{{ end }}
