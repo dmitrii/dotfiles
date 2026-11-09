@@ -1,0 +1,102 @@
+#!/bin/bash
+# Upgrade outdated Homebrew formulae and casks whose recipe, and the recipe of
+# every package the upgrade pulls in, last changed at least BREW_COOLDOWN_HOURS
+# (default 12) hours ago. Formulae with high or critical OSV advisories upgrade
+# without waiting.
+#
+# Usage: brew-upgrade-with-cooldown [--dry-run | --self-test]
+set -euo pipefail
+
+hours=${BREW_COOLDOWN_HOURS:-12}
+dry_run=
+[[ ${1:-} == --dry-run ]] && dry_run=--dry-run
+
+# Package names from `brew upgrade --dry-run` lines of the form "name old -> new".
+# These cover the requested package, its outdated dependencies and its
+# outdated dependents.
+upgrade_names() { awk '$3 == "->" { print $1 }'; }
+
+if [[ ${1:-} == --self-test ]]; then
+  got=$(printf '%s\n' '==> Would upgrade 1 dependencies:' 'aws-c-io    1.1.1  -> 1.1.2' \
+    '==> Would upgrade 1 requested outdated package' 'awscli 2.39.3 -> 2.39.4_1 (24MB)' \
+    '✔︎ Bottle Manifest lz4 (1.11.0)' | upgrade_names | tr '\n' ',')
+  [[ $got == 'aws-c-io,awscli,' ]] || { echo "self-test failed: '$got'" >&2; exit 1; }
+  echo ok
+  exit
+fi
+
+cache=$(mktemp -d)
+trap 'rm -rf "$cache"' EXIT
+now=$(date +%s)
+
+# Whole hours since the last commit to the recipe file in its tap's GitHub
+# repo; empty when unknown. Results go to files so that lookups made inside
+# pipelines are cached too.
+recipe_age() { # kind name
+  local f=$cache/$1-${2//\//_} tap src owner t
+  if [[ ! -f $f ]]; then
+    read -r tap src < <(brew info --json=v2 "--$1" "$2" |
+      jq -r '(.formulae + .casks)[0] | "\(.tap) \(.ruby_source_path)"')
+    owner=${tap%%/*}
+    [[ $owner == homebrew ]] && owner=Homebrew
+    t=$(gh api "repos/$owner/homebrew-${tap#*/}/commits?path=$src&per_page=1" \
+      --jq '.[0].commit.committer.date' 2>/dev/null) || t=
+    [[ -n $t ]] && t=$(((now - $(date -juf %Y-%m-%dT%H:%M:%SZ "$t" +%s)) / 3600))
+    echo "$t" >"$f"
+  fi
+  cat "$f"
+}
+
+export HOMEBREW_NO_AUTO_UPDATE=1
+brew update --quiet
+
+# `brew vulns` exits non-zero on open findings. `brew upgrade --vulnerable`
+# refuses to run when any installed formula cannot be scanned, so the names
+# are taken from `brew vulns` instead.
+vulnerable=$(brew vulns --json --severity=high --fix-available 2>/dev/null |
+  jq -r '.findings[] | select(.vulnerabilities | length > 0) | .formula') || :
+if [[ -n $vulnerable ]]; then
+  echo "==> Formulae with high or critical advisories (no cooldown): $(echo $vulnerable)"
+  brew upgrade --formula --yes $dry_run $vulnerable
+fi
+
+outdated() { # kind
+  brew outdated "--$1" --json=v2 | jq -r '(.formulae + .casks)[] | select(.pinned | not) | .name'
+}
+outdated_formula=$(outdated formula)
+outdated_cask=$(outdated cask)
+# Width of the name column, so that ages and "(waits)" line up.
+width=$(echo "$outdated_formula $outdated_cask" | tr ' ' '\n' | awk 'length > w { w = length } END { print w + 0 }')
+row() { printf "%-${width}s  %-7s  %s\n" "$@"; }
+
+echo "==> Checking ages of packages and their dependencies..."
+formulae=()
+casks=()
+for kind in formula cask; do
+  names=$outdated_formula
+  [[ $kind == cask ]] && names=$outdated_cask
+  for name in $names; do
+    # Youngest recipe age among the packages this upgrade touches; -1 or
+    # empty when any age is unknown.
+    youngest=$(brew upgrade --dry-run "--$kind" "$name" 2>/dev/null | upgrade_names |
+      while read -r n; do a=$(recipe_age "$kind" "$n"); echo "${a:--1}"; done |
+      sort -n | head -n 1)
+    if [[ -z $youngest || $youngest == -1 ]]; then
+      row "$name" unknown "(waits)"
+    elif ((youngest < hours)); then
+      row "$name" "${youngest}h" "(waits)"
+    else
+      row "$name" "${youngest}h" ""
+      if [[ $kind == formula ]]; then formulae+=("$name"); else casks+=("$name"); fi
+    fi
+  done
+done
+
+if ((${#formulae[@]})); then
+  echo "==> Upgrading formulae: ${formulae[*]}"
+  brew upgrade --formula --yes $dry_run "${formulae[@]}"
+fi
+if ((${#casks[@]})); then
+  echo "==> Upgrading casks: ${casks[*]}"
+  brew upgrade --cask --yes $dry_run "${casks[@]}"
+fi
