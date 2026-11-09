@@ -1,0 +1,2 @@
+# New hc terminals run a fish login shell, which carries PATH and fish functions.
+shell = ["/opt/homebrew/bin/fish", "--login"]

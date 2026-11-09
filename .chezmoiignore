@@ -9,3 +9,9 @@
 .claude/skills/process-oss-contribution
 .claude/skills/triage-hawk-prs
 .local/bin/gdoc-fetch
+{{ if not (lookPath "herdr") }}
+.claude/skills/herdr
+{{ end }}
+{{ if not (lookPath "hc") }}
+.config/herdr-core
+{{ end }}

@@ -31,7 +31,9 @@ every repo.
 
 - **Stage in an adjacent worktree.** Prepare PR changes in a git worktree next to the
   repo — for a repo at `<dir>/<name>`, use `<dir>/<name>-worktree/`. Do not
-  stage in the user's primary checkout, and don't use `/tmp` as the staging repo.
+  stage in the user's primary checkout, and don't use `/tmp` as the staging repo. A worker
+  started by the `dispatch` skill already runs in its own worktree under `~/.forest/`, and
+  that worktree is its staging worktree.
 - **Show the diff before pushing.** Present the full diff and wait for the user's
   assessment before running `git push`.
 - **Show the PR text before creating it.** Present the proposed PR title and body and wait
