@@ -1,0 +1,9 @@
+{{- $priv := joinPath .chezmoi.homeDir ".config/chezmoi-private/chezmoi.toml" -}}
+[git]
+    autoCommit = true
+
+{{ range list "apply" "diff" "status" "update" "re-add" -}}
+[hooks.{{ . }}.post]
+    command = "sh"
+    args = ["-c", "[ ! -f {{ $priv }} ] || chezmoi --config {{ $priv }} {{ . }}"]
+{{ end -}}

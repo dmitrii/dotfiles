@@ -1,0 +1,6 @@
+# Paths owned by the private dotfiles repo on each machine
+.config/fish/conf.d/local-*.fish
+.config/git/local*.gitconfig
+.config/brew/local*.Brewfile
+.claude/rules/local/**
+.claude/settings.json

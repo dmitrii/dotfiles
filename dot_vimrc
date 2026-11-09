@@ -1,0 +1,21 @@
+" Minimal vimrc for system /usr/bin/vim (nvim ignores this; it uses init.lua).
+syntax on
+filetype plugin indent on
+set background=dark
+silent! colorscheme habamax
+set number
+
+" YAML: 2-space indent
+autocmd FileType yaml setlocal shiftwidth=2 tabstop=2 expandtab
+
+" Blinking block cursor in every mode (color comes from the iTerm profile;
+" iTerm ignores OSC 12 here, so cursor color is set in Settings > Profiles > Colors).
+if !has('gui_running')
+  set guicursor=a:block-blinkon400-blinkoff250
+endif
+
+" F7 toggles a bottom console: open from the editor, close from the terminal.
+" (In vim's terminal, keys go to the shell -- Esc/:q won't work. Use the
+"  Ctrl-w prefix: <C-w>N = look mode, <C-w>w = jump to editor, <C-w>q = close.)
+nnoremap <F7> :botright terminal ++rows=12<CR>
+tnoremap <F7> <C-w>:q!<CR>

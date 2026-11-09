@@ -1,0 +1,19 @@
+[gpg]
+	format = ssh
+[user]
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
+	name = Dmitrii Calzago
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = {{ .chezmoi.homeDir }}/.ssh/allowed_signers
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+[include]
+	path = ~/.config/git/local.gitconfig
