@@ -19,7 +19,7 @@ if status is-interactive
 
     # ---- fzf ------------------------------------------------------------
     set -gx FZF_DEFAULT_COMMAND 'fd . --hidden --exclude ".git"'
-    fzf --fish | source          # keybindings + completion (replaces ~/.fzf.zsh)
+    fzf --fish 2>/dev/null | source   # keybindings + completion; fzf < 0.48 lacks --fish
 
     # ---- handy aliases --------------------------------------------------
     # fish's `alias` auto-inserts `command` for self-referential ones

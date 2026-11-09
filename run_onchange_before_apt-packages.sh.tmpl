@@ -1,0 +1,24 @@
+{{ if lookPath "apt-get" -}}
+#!/bin/sh
+set -e
+sudo apt-get update -qq
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+    build-essential \
+    curl \
+    fd-find \
+    fish \
+    fzf \
+    gh \
+    git \
+    jq \
+    ripgrep \
+    tmux \
+    tree \
+    unzip
+# Ubuntu names the fd binary fdfind
+mkdir -p "$HOME/.local/bin"
+ln -sf /usr/bin/fdfind "$HOME/.local/bin/fd"
+if [ "$(getent passwd "$USER" | cut -d: -f7)" != /usr/bin/fish ]; then
+    sudo chsh -s /usr/bin/fish "$USER"
+fi
+{{ end -}}

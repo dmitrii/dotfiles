@@ -16,3 +16,7 @@
 .config/herdr-core
 {{ end }}
 README.md
+{{ if ne .chezmoi.os "darwin" }}
+.Brewfile
+.local/bin/brew-upgrade-with-cooldown
+{{ end }}

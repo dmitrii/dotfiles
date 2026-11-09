@@ -1,0 +1,7 @@
+function up --description 'Upgrade system packages, then pull and apply both dotfiles repos'
+{{- if eq .chezmoi.os "darwin" }}
+    brew-upgrade-with-cooldown; and chezmoi update
+{{- else }}
+    sudo apt-get update; and sudo apt-get upgrade -y; and chezmoi update
+{{- end }}
+end
