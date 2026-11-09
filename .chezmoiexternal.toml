@@ -1,0 +1,5 @@
+# Mischa's public dotfiles. No refreshPeriod, so chezmoi clones once and never pulls;
+# update deliberately with git in ~/Code/revmischa/dotfiles after reading the log.
+["Code/revmischa/dotfiles"]
+    type = "git-repo"
+    url = "https://github.com/revmischa/dotfiles.git"

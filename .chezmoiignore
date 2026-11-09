@@ -4,3 +4,8 @@
 .config/brew/local*.Brewfile
 .claude/rules/local/**
 .claude/settings.json
+.claude/skills/review-pr-deeply
+.claude/skills/gdoc-fetch
+.claude/skills/process-oss-contribution
+.claude/skills/triage-hawk-prs
+.local/bin/gdoc-fetch
