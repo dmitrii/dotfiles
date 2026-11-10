@@ -1,25 +1,63 @@
-brew "chezmoi"
+## devops tools
+
+brew "awscli"
+brew "kubernetes-cli"
+brew "helm"
+brew "kind"
+brew "pulumi"
+brew "opentofu"
+brew "libpq"
+
+## dev tools
+
+brew "git"
+brew "gh"
+brew "python"
+brew "uv"
 brew "cmake"
 brew "coreutils"
-brew "fastfetch"
-brew "fd"
-brew "fish"
-brew "fzf"
-brew "gh"
-brew "git"
-brew "go"
-brew "graphviz"
-brew "grep"
-brew "herdr"
-brew "jq"
-brew "jwt-cli"
+brew "glib"
 brew "neovim"
-brew "pi-coding-agent"
-brew "rclone"
-brew "ripgrep"
-brew "shellcheck"
-brew "tailscale"
+brew "fish"
+brew "grep"
 brew "tree"
-brew "uv"
+brew "fd"      # Simple, fast and user-friendly alternative to find
+brew "fzf"     # Command-line fuzzy finder written in Go
+brew "ripgrep" # Search tool like grep and The Silver Searcher
+brew "jq"      # Lightweight and flexible command-line JSON processor
+
+## code assistants
+
+cask "claude"
 cask "claude-code"
 cask "codex"
+cask "google-gemini"
+brew "gemini-cli"
+
+## GUI apps
+
+#cask "google-chrome"
+cask "orbstack"  # replacement for docker-desktop
+cask "tailscale-app"
+cask "linear"
+cask "slack"
+cask "iterm2"
+cask "visual-studio-code"
+cask "bitwarden"
+cask "maccy"
+
+## nerd fonts
+cask "font-caskaydia-cove-nerd-font"
+cask "font-fira-code-nerd-font"
+cask "font-iosevka-nerd-font"
+cask "font-iosevka-term-nerd-font"
+cask "font-iosevka-term-slab-nerd-font"
+cask "font-jetbrains-mono-nerd-font"
+
+## VS Code extensions
+
+vscode "ms-python.python"
+vscode "ms-python.pylint"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-vscode.makefile-tools"
+vscode "anthropic.claude-code"
