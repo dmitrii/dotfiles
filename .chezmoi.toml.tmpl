@@ -3,8 +3,16 @@
 [git]
     autoCommit = true
 
-{{ range list "apply" "diff" "status" "update" "re-add" -}}
+{{ range list "apply" "diff" "status" "re-add" -}}
 [hooks.{{ . }}.post]
     command = "sh"
     args = ["-c", "[ ! -f {{ $priv }} ] || {{ $exe }} --config {{ $priv }} {{ . }}"]
 {{ end -}}
+
+# update names each repo before pulling it
+[hooks.update.pre]
+    command = "sh"
+    args = ["-c", "echo Fetching $(git -C {{ .chezmoi.sourceDir }} remote get-url origin)"]
+[hooks.update.post]
+    command = "sh"
+    args = ["-c", "[ ! -f {{ $priv }} ] || { echo Fetching $(git -C $({{ $exe }} --config {{ $priv }} source-path) remote get-url origin); {{ $exe }} --config {{ $priv }} update; }"]
