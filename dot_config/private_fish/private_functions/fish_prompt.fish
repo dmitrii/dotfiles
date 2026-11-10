@@ -8,7 +8,7 @@ function fish_prompt --description 'Write out the prompt'
     # --- fish's default prompt below ---
     set -l last_pipestatus $pipestatus
     set -lx __fish_last_status $status
-    set -l normal (set_color --reset)
+    set -l normal (set_color normal) # fish 3.x has no --reset
     set -l color_cwd $fish_color_cwd
     set -l suffix '>'
     if functions -q fish_is_root_user; and fish_is_root_user
