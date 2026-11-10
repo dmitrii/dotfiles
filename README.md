@@ -25,7 +25,7 @@ Each machine supplies its own identity and hosts in files this repo leaves alone
 ```sh
 # Homebrew, if missing: https://brew.sh
 brew install chezmoi
-chezmoi init dmitrii/dmitrii_dotfiles   # clone and generate the config; changes nothing in $HOME
+chezmoi init dmitrii                    # clone github.com/dmitrii/dotfiles; changes nothing in $HOME
 chezmoi diff                            # review what apply will write
 chezmoi apply                           # write the files, then `brew bundle --global`
 git config --file ~/.config/git/local.gitconfig user.email <email>
@@ -35,7 +35,7 @@ chsh -s /opt/homebrew/bin/fish          # needs /opt/homebrew/bin/fish in /etc/s
 ### Ubuntu
 
 ```sh
-sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply dmitrii/dmitrii_dotfiles
+sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply dmitrii
 git config --file ~/.config/git/local.gitconfig user.email <email>
 exec fish -l
 ```
