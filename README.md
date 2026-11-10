@@ -79,18 +79,6 @@ The `herdr` skill is generated from `herdr --skill` and needs no edits.
 
 Commits happen on `add`, `re-add` and `edit`. Pushes happen only on `chezmoi git push`.
 
-## Mischa's skills
-
-`.chezmoiexternal.toml` clones [revmischa/dotfiles](https://github.com/revmischa/dotfiles) to `~/Code/revmischa/dotfiles` on first apply and never pulls it. `dot_claude/*/symlink_*` entries link `dispatch`, `disk-hygiene`, the three `thermonuclear` skills, `/analyze` and its four agents into `~/.claude`. To take his changes, read them first:
-
-```fish
-git -C ~/Code/revmischa/dotfiles fetch
-git -C ~/Code/revmischa/dotfiles log -p HEAD..origin/main -- dot_claude/skills dot_claude/commands/analyze.md dot_claude/agents
-git -C ~/Code/revmischa/dotfiles pull
-```
-
-`dot_claude/skills/triaging-open-prs/SKILL.md` is a copy with local edits; its `Source:` line names the upstream commit. Merge later upstream changes by hand from `git -C ~/Code/revmischa/dotfiles diff <commit>..origin/main -- dot_claude/skills/triaging-open-prs`, then update the `Source:` line.
-
 ## Remote boxes
 
 `ssh-forward-agent` runs before each connection to a host whose `~/.ssh/config.d` entry calls it. It loads one key into a separate agent, restricted to that host and to `github.com` through that host, for 12 hours, and that agent is the one forwarded. On the remote box, `~/.ssh/rc` points `~/.ssh/agent.sock` at the newest connection's agent, and fish re-points it at a live one when a connection closes.
