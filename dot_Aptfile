@@ -1,6 +1,7 @@
 # apt packages for Debian/Ubuntu machines, one per line.
 # Editing this file reruns the install on the next `chezmoi apply` or `up`.
 build-essential
+claude-code
 curl
 fd-find
 fish

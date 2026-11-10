@@ -1,5 +1,5 @@
 {{ if eq .chezmoi.os "darwin" -}}
 #!/bin/sh
 # ~/.Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
-brew bundle --global
+brew bundle --global --no-upgrade   # upgrades go through `up`, with its cooldown
 {{ end -}}

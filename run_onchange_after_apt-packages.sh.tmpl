@@ -2,9 +2,34 @@
 #!/bin/sh
 # ~/.Aptfile hash: {{ include "dot_Aptfile" | sha256sum }}
 set -e
+export PATH="$HOME/.local/bin:$PATH"
+
+# Claude Code's signed apt repository (stable channel), for `claude-code` in ~/.Aptfile.
+# The key is trusted only when its fingerprint matches the one Anthropic publishes.
+if [ ! -f /etc/apt/sources.list.d/claude-code.list ]; then
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ca-certificates curl gnupg
+    sudo install -d -m 0755 /etc/apt/keyrings
+    sudo curl -fsSL https://downloads.claude.ai/keys/claude-code.asc -o /etc/apt/keyrings/claude-code.asc
+    if ! gpg --show-keys --with-colons /etc/apt/keyrings/claude-code.asc |
+        grep -q '^fpr:*31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE:'; then
+        sudo rm -f /etc/apt/keyrings/claude-code.asc
+        echo "claude-code apt key: fingerprint mismatch" >&2
+        exit 1
+    fi
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" |
+        sudo tee /etc/apt/sources.list.d/claude-code.list >/dev/null
+fi
+
 sudo apt-get update -qq
 grep -v -e '^[[:space:]]*#' -e '^[[:space:]]*$' "$HOME/.Aptfile" |
     xargs sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq
+
+# Codex has no apt repository. Its installer verifies checksums, and the installed
+# binary updates itself.
+if ! command -v codex >/dev/null; then
+    curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh
+fi
+
 # Ubuntu names the fd binary fdfind
 mkdir -p "$HOME/.local/bin"
 ln -sf /usr/bin/fdfind "$HOME/.local/bin/fd"
