@@ -1,0 +1,5 @@
+# sshd runs this on every login. Point a fixed path at this connection's forwarded
+# agent, so tmux, hc terminals and background agents use the newest connection.
+if [ -S "$SSH_AUTH_SOCK" ]; then
+    ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/agent.sock"
+fi

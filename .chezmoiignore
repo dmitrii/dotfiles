@@ -23,3 +23,10 @@ README.md
 {{ if not (lookPath "apt-get") }}
 .Aptfile
 {{ end }}
+.ssh/config.d/local-*
+{{ if eq .chezmoi.os "darwin" }}
+.ssh/rc
+.config/fish/conf.d/ssh-agent.fish
+{{ else }}
+.local/bin/ssh-forward-agent
+{{ end }}

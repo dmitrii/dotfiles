@@ -1,0 +1,21 @@
+{{- if eq .chezmoi.os "darwin" -}}
+# Added by OrbStack: 'orb' SSH host for Linux machines
+# This only works if it's at the top of ssh_config (before any Host blocks).
+# This won't be added again if you remove it.
+Include ~/.orbstack/ssh/config
+
+{{ end -}}
+# Per-machine hosts, owned by the private repo
+Include ~/.ssh/config.d/*
+{{- if eq .chezmoi.os "darwin" }}
+
+Host *
+	UseKeychain yes
+	AddKeysToAgent yes
+{{- else }}
+
+# GitHub is reached through a key forwarded from the Mac; the Mac's agent checks
+# GitHub's host key on every use, so trusting it on first contact here adds no exposure.
+Host github.com
+	StrictHostKeyChecking accept-new
+{{- end }}

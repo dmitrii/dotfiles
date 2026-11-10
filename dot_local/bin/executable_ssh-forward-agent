@@ -1,0 +1,16 @@
+#!/bin/sh
+# Usage: ssh-forward-agent <host> <key>
+# Run by ssh (Match exec) before each connection to <host>. Starts the forwarding
+# agent if it is not running, then loads <key> so that it can only authenticate to
+# github.com through <host>, for 12 hours. Every connection reloads the key, which
+# restarts the 12 hours.
+sock="$HOME/.ssh/forward-agent.sock"
+SSH_AUTH_SOCK=$sock ssh-add -l >/dev/null 2>&1
+if [ $? -eq 2 ]; then
+    rm -f "$sock"
+    ssh-agent -a "$sock" >/dev/null
+fi
+SSH_AUTH_SOCK=$sock SSH_ASKPASS_REQUIRE=never \
+    ssh-add -q --apple-use-keychain -t 12h -h "$1>github.com" "$2" </dev/null ||
+    echo "ssh-forward-agent: could not load $2; git on $1 will not reach GitHub" >&2
+exit 0
