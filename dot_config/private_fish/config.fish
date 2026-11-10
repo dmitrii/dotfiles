@@ -1,3 +1,8 @@
+# ---- PATH ---------------------------------------------------------------
+# User-installed tools (chezmoi on Linux, uv tools, scripts managed by chezmoi).
+# Global scope so the setting lives in this file and reaches every machine.
+fish_add_path -g ~/.local/bin
+
 # ---- resource limits ----------------------------------------------------
 # macOS defaults the open-file soft limit to 256, which floods tools that fan
 # out many FDs (pulumi up, docker) with "Too many open files". Raise it — but
